@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface MemberMapper {
@@ -32,4 +33,25 @@ public interface MemberMapper {
             // Param 의 value가 변수, String email은 받는값 
             @Param(value = "email") String email);
 
+    
+    @Update({
+    	"UPDATE MEMBER SET UPW=#{upw} WHERE UEMAIL=#{email}"
+    })
+    public int memberUpdatePw(
+    		@Param(value="email") String email,
+    		@Param(value="upw") String upw);
+    
+    @Update({
+    	"UPDATE MEMBER SET UNAME=#{name}, UPHONE=#{phone} WHERE UEMAIL=#{email}"
+    })
+    public int updateMember(
+    		@Param("email") String email, 
+    		@Param("name") String name, 
+    		@Param("phone") String phone);
+    
+    
+    @Update({
+    	"UPDATE MEMBER SET UPW='X', UNAME=NULL, UPHONE=NULL, UROLE=NULL WHERE UEMAIL=#{email}"
+    })
+    public int deleteMember(@Param("email") String email);
 }

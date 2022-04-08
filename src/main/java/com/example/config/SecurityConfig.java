@@ -32,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(uService).passwordEncoder(bCryptPasswordEncoder());
     }
+    
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -67,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
         //접근권한 불가 403
         http.exceptionHandling().accessDeniedPage("/page403");
+        
 		
 		// h2-console을 사용하기 위해서
         http.csrf().ignoringAntMatchers("/h2-console/**");

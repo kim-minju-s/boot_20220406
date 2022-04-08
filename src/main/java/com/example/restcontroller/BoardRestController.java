@@ -1,9 +1,11 @@
 package com.example.restcontroller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,9 @@ import com.example.mapper.BoardMapper;
 @RestController
 @RequestMapping("/api/board")
 public class BoardRestController {
+	
+	// 정의 변수 설정
+	@Value("${board.page.count}") int PAGECNT;
 
 	@Autowired BoardMapper bMapper;
 	
@@ -75,4 +80,64 @@ public class BoardRestController {
 		}
 		return map;
 	}
+	
+	// 게시글 1개 조회
+	// 127.0.0.1:9090/ROOT/api/board/selectone?bno=
+	@RequestMapping(value="/selectone", 
+			method = {RequestMethod.GET},
+			consumes = {MediaType.ALL_VALUE},	// 모든 타입을 다 받음
+			produces = {MediaType.APPLICATION_JSON_VALUE})	// 반환은 JSON타입으로
+	public Map<String, Object> boardSelectOneGET(
+			@RequestParam(name="bno") long bno ){	//@ModelAttribute 대신 사용
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", 0);
+		
+		BoardDTO retBoard = bMapper.selectBoardOne(bno);
+		if (retBoard != null) {
+			map.put("status", 200);
+			map.put("result", retBoard);
+		}
+		return map;
+	}
+	
+	// 게시글 목록(페이지네이션)
+	// 127.0.0.1:9090/ROOT/api/board/selectlist?page=1
+	@RequestMapping(value="/selectlist", 
+			method = {RequestMethod.GET},
+			consumes = {MediaType.ALL_VALUE},	// 모든 타입을 다 받음
+			produces = {MediaType.APPLICATION_JSON_VALUE})	// 반환은 JSON타입으로
+	public Map<String, Object> boardSelectListGET(
+			@RequestParam(name="page", defaultValue ="1") int page ){	//@ModelAttribute 대신 사용
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", 0);
+		
+		List<BoardDTO> list = bMapper.selectBoardList((page*PAGECNT)-(PAGECNT-1), page*PAGECNT);
+		if (list != null) {
+			map.put("status", 200);
+			map.put("result", list);
+		}
+		return map;
+	}
+	
+	// 조회수 증가
+	// 127.0.0.1:9090/ROOT/api/board/updatehit?bno=
+	@RequestMapping(value="/updatehit", 
+			method = {RequestMethod.PUT},
+			consumes = {MediaType.ALL_VALUE},	// 모든 타입을 다 받음
+			produces = {MediaType.APPLICATION_JSON_VALUE})	// 반환은 JSON타입으로
+	public Map<String, Object> boardUpdateHitPUT(
+			@RequestParam(name="bno") long bno){	//@ModelAttribute 대신 사용
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", 0);
+		
+		int ret = bMapper.updateBoardHitOne(bno);
+		if (ret == 1) {
+			map.put("status", 200);
+		}
+		return map;
+	}
+	
 }

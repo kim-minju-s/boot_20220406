@@ -20,4 +20,7 @@ public class MemberDTO {
     
     // 날짜 포멧을 바꿔서 보관하기 위해
     private String uregdate1;
+    
+    // 임시로 바꿀 비밀번호 저장
+    private String upw1;
 }
