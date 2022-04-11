@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 목록</title>
+</head>
+<body>
+    <div>
+        <h3>게시글 목록</h3>
+        <hr />
+        <a th:href="@{/board/insert}">게시글 등록</a>
+        
+        <form th:action="@{/board/selectlist}">
+            <input type="text" name="title" />
+            <input type="submit" value="검색" />
+        </form>
+        
+        <table border="1">
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>저자</th>
+                <th>조회수</th>
+                <th>등록일</th>
+            </tr>
+            <tr th:each="tmp : ${list}">
+                <td th:text="${tmp.no}"></td>
+                <td>
+                	<a href="#" th:onclick="|javascript:updateHit('${tmp.no}')|" th:text="${tmp.title}"></a>
+                </td>
+                <td th:text="${tmp.content}"></td>
+                <td th:text="${tmp.writer}"></td>
+                <td th:text="${tmp.hit}"></td>
+                <td th:text="${tmp.regdate}"></td>
+                
+            </tr>
+        </table>
+        <th:block th:each="i: ${#numbers.sequence(1, pages)}">
+        	<a th:href="@{/board/selectlist(page=${i}, title=${param.title})}" th:text="${i}"></a>
+        </th:block>
+        
+    </div>
+    <script>
+    	function updateHit(no){
+    		alert(no);
+    		// 1. 조회수 증가용 restful 호출
+    		const xhr = new XMLHttpRequest();	// vue의 axios와 같은것
+    		const url = '/ROOT/api/board/updatehit1?no='+no;
+    		xhr.open("PUT", url, true);
+    		xhr.responseType="json";
+    		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8;');
+    		xhr.onload = function(e){
+    			console.log(e.target);
+    			if(e.target.response.status === 200){
+    				// 2. 다음 페이지로 이동
+    				location.href="/ROOT/board/selectone?no="+no;
+    			}
+    		}
+    		xhr.send();
+    	}
+    </script>
+</body>
+</html>
