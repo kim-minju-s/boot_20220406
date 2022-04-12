@@ -39,8 +39,10 @@ public class BoardRestController {
 		try {
 			
 			BoardEntity board = bRepository.findFirst1ByNoGreaterThanOrderByNoAsc(no);
-			map.put("status", 200);
-			map.put("result", board);
+			if(board != null) {
+				map.put("status", 200);
+				map.put("result", board);				
+			}
 		} catch (Exception e) {
 			map.put("status", 0);
 		}

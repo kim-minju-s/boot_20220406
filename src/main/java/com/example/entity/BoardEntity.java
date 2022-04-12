@@ -1,6 +1,8 @@
 package com.example.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -50,4 +53,10 @@ public class BoardEntity {
 	@CreationTimestamp	// CURRENT_DATE
 	@Column(name = "BREGDATE")
 	private Date regdate;
+	
+	// n:1 의 관계
+	// 기본키에 해당하는 답글이 여러개라서 List로 불러옴
+	// 단점은 답글이 많을 때는 속도가 느려짐
+	@OneToMany(mappedBy = "board")
+	private List<BoardReplyEntity> replyList = new ArrayList<>();
 }

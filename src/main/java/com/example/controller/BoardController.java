@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.entity.BoardEntity;
+import com.example.entity.BoardReplyEntity;
+import com.example.repository.BoardReplyRepository;
 import com.example.repository.BoardRepository;
 
 @Controller
@@ -21,8 +23,22 @@ import com.example.repository.BoardRepository;
 public class BoardController {
 
 	@Autowired BoardRepository bRepository;
+	@Autowired BoardReplyRepository brRepository;
 	
 	@Value("${board.page.count}") int PAGECNT;
+	
+	
+	// 답글쓰기
+	@PostMapping(value = "/insertreply")
+	public String insertReply(
+			@ModelAttribute BoardReplyEntity reply) {
+		
+		System.out.println(reply.toString());
+		
+		brRepository.save(reply);
+		
+		return "redirect:/board/selectone?no="+reply.getBoard().getNo();
+	}
 	
 	@GetMapping(value = "/insert")
 	public String insertGET() {
@@ -62,8 +78,15 @@ public class BoardController {
 			@RequestParam(name = "no") long no) {
 		
 		BoardEntity board = bRepository.findById(no).orElse(null);
+		System.out.println(board.getReplyList().toString());
+		
+		List<BoardReplyEntity> repList =
+				brRepository.findByBoard_noOrderByNoDesc(board.getNo());
+		
+		model.addAttribute("repList", repList);
 		model.addAttribute("board", board);
 		return "/board/selectone";
 	}
+	
 	
 }

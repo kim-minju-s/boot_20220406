@@ -24,14 +24,31 @@
         <button>삭제</button>
         <br />
         <button>이전글</button>
-        <a href="#" th:onclick="|javascript:nextBoard('${board.no}')|"><button>다음글</button></a>
+        <button>다음글</button>
+        
+        <hr />
+        
+        <form th:action="@{/board/insertreply(bno=${board.no})}" method="post">
+        	<input type="hidden" name="board.no" th:value="${board.no}" />
+	        <textarea rows="6" name="content" placeholder="답글작성" ></textarea> <br />
+	        <input type="text" name="writer" placeholder="작성자" /> <br />
+	        <input type="submit" value="답글작성" /> <br />
+        </form>
+        <br />
+        
+        <h3>답글 목록</h3>
+        <table border="1">
+        	<tr th:each="tmp : ${repList}">
+        		<td th:text="${tmp.no}" ></td>
+        		<td th:text="${tmp.content}" ></td>
+        		<td th:text="${tmp.writer}" ></td>
+        		<td th:text="${tmp.regdate}" ></td>
+        	</tr>
+        </table>
 
     </div>
     <script>
-	function nextBoard(no){
-		alert(no);
-		
-	}
+	
     </script>
 </body>
 </html>
