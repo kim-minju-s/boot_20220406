@@ -23,6 +23,7 @@ public class MemberController {
 		return "/member/join";
 	}
 	
+	// 127.0.0.1:9090/ROOT/
 	@PostMapping(value="joinaction")
 	public String joinPOST(@ModelAttribute MemberDTO member) {
 		
