@@ -17,9 +17,12 @@ public interface BuyRepository extends JpaRepository<BuyEntity, Long>{
 	BuyProjection findByNo(Long bno);
 	
 	//findBy변수_하위변수
-	// 회원 이메일로 조회
+	// 고객회원 이메일로 조회
 	List<BuyProjection> findByMember_uemail(String uemail);
 	
+	// 판매자용 주문목록
+	List<BuyProjection> findByItem_icodeIn(List<Long> code);
+
 	// 주문번호를 기준으로 내림차순 정렬
 	// SELECT * FROM 테이블명 WHERE 1 ORDER BY NO ASC
 	List<BuyProjection> findByOrderByNoAsc();

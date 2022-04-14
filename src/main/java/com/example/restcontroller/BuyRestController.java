@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import com.example.entity.BuyEntity;
 import com.example.entity.BuyProjection;
 import com.example.entity.ItemEntity;
 import com.example.entity.MemberEntity;
+import com.example.jwt.JwtUtil;
 import com.example.repository.BuyRepository;
 
 
@@ -25,6 +27,7 @@ import com.example.repository.BuyRepository;
 public class BuyRestController {
 
 	@Autowired BuyRepository buyRepository;
+	@Autowired JwtUtil jwtUtil;
 	
 	// 127.0.0.1:9090/ROOT/api/buy/insert
 	// { bcnt:2, item:{icode:3}, member:{uemail:a1} }
@@ -75,6 +78,42 @@ public class BuyRestController {
 		
 		return map;
 	}
+	
+	// vue에서 주문하기
+	// { bcnt:2, item:{icode:3} } + headers token으로 전송됨
+	@RequestMapping(value="/insert2", 
+			method = {RequestMethod.POST},	// POST로 받음
+			consumes = {MediaType.ALL_VALUE},	// 모든 타입을 다 받음
+			produces = {MediaType.APPLICATION_JSON_VALUE})	// 반환은 JSON타입으로
+	public Map<String, Object> buyInsert2POST(
+			@RequestHeader(name = "token") String token,
+			@RequestBody BuyEntity buyEntity){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			System.out.println(buyEntity.toString());
+			
+			// 토큰에서 이메일 추출
+			String email = jwtUtil.extractUsername(token);
+			
+			// 회원엔티티 객체 생성 및 이메일 추가
+			MemberEntity memberEntity = new MemberEntity();
+			memberEntity.setUemail(email);
+			
+			// 주문엔티티에 추가
+			buyEntity.setMember(memberEntity);
+			
+			// 저장소 이용해서 DB에 추가
+			buyRepository.save(buyEntity);
+			map.put("status", 200);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("status", 0);
+		}
+		return map;
+	}
+	
+	
 	
 	
 	// 주문 조회

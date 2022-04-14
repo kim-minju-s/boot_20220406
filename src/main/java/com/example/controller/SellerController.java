@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.dto.ItemDTO;
+import com.example.entity.BuyProjection;
 import com.example.mapper.ItemMapper;
+import com.example.repository.BuyRepository;
 
 @Controller
 @RequestMapping(value="/seller")
@@ -26,7 +29,8 @@ public class SellerController {
 	// 정의 변수 설정
 	@Value("${board.page.count}") int PAGECNT;
 	
-	@Autowired ItemMapper iMapper;
+	@Autowired ItemMapper iMapper;	// Mybatis
+	@Autowired BuyRepository bRepository;	// JPA + Hibernate
 	
 	// 127.0.0.1:9090/ROOT/seller/home?page=1&txt=검색어
 	@GetMapping(value= {"/", "/home"})
@@ -44,6 +48,14 @@ public class SellerController {
 			// 3 -> 1 , 15 -> 2
 			long cnt = iMapper.selectItemCount(txt, user.getUsername());
 			model.addAttribute("pages", (cnt-1)/PAGECNT+1);
+			
+			// 주문내역
+			List<Long> list1 = new ArrayList<>();
+			for(ItemDTO item : list) {
+				list1.add(item.getIcode());
+			}
+			List<BuyProjection> list2 = bRepository.findByItem_icodeIn(list1);
+			model.addAttribute("list2", list2);
 			
 			return "/seller_home";			
 		}
