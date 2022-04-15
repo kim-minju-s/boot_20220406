@@ -16,14 +16,22 @@
 		<form th:action="@{/seller/insertitem}">
 			<input type="submit" value="물품등록">
 		</form>
+		<form th:action="@{/seller/insertbatch}">
+			<input type="submit" value="물품일괄등록">
+		</form>
 		
 		<form th:action="@{/seller/home}">
             <input type="text" name="txt" />
             <input type="submit" value="검색" />
         </form>
         
+        <form th:action="@{/seller/deleteupdatebatch}" method="get">
+			<input type="submit" name="btn" value="물품일괄삭제">
+			<input type="submit" name="btn" value="물품일괄수정">
+		
         <table border="1">
             <tr>
+            	<th>체크</th>
                 <th>번호</th>
                 <th>물품코드</th>
                 <th>이름</th>
@@ -33,6 +41,7 @@
                 <th>버튼</th>
             </tr>
             <tr th:each="tmp, idx : ${list}">
+            	<td> <input type="checkbox" name="no" th:value="${tmp.icode}" /> </td>
                 <td th:text="${idx.count}"></td>
                 <td th:text="${tmp.icode}"></td>
                 <td th:text="${tmp.iname}"></td>
@@ -45,6 +54,8 @@
                 </td>
             </tr>
         </table>
+        </form>
+        
         <th:block th:each="i: ${#numbers.sequence(1, pages)}">
             <a th:href="@{/seller/home(page=${i}, txt=${param.txt})}" th:text="${i}"></a>
         </th:block>

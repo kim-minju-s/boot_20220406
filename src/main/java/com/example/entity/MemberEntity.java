@@ -10,6 +10,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Data;
 
 @Entity
@@ -23,6 +26,7 @@ public class MemberEntity {
 	  
 	  // 암호
 	  @Column(nullable = false)
+	  @JsonProperty(access = Access.WRITE_ONLY)
 	  private String upw;
 	  
 	  // 이름

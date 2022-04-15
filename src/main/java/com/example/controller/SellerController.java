@@ -19,8 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.dto.ItemDTO;
 import com.example.entity.BuyProjection;
+import com.example.entity.ItemEntity;
+import com.example.entity.MemberEntity;
 import com.example.mapper.ItemMapper;
 import com.example.repository.BuyRepository;
+import com.example.service.ItemService;
 
 @Controller
 @RequestMapping(value="/seller")
@@ -31,6 +34,104 @@ public class SellerController {
 	
 	@Autowired ItemMapper iMapper;	// Mybatis
 	@Autowired BuyRepository bRepository;	// JPA + Hibernate
+	
+	@Autowired ItemService iService;
+	
+	// 수정, 삭제 버튼 눌렀을 때
+	@GetMapping(value = "/deleteupdatebatch")
+	public String deleteupdateBatchGET(
+			Model model,
+			@RequestParam(name = "btn") String btn,
+			@RequestParam(name = "no") Long[] no) {
+		
+		System.out.println(btn);
+		System.out.println(no[0]);
+		if(btn.equals("물품일괄삭제")) {
+			
+			iService.deleteItemBatch(no);
+		}
+		else if(btn.equals("물품일괄수정")) {
+			List<ItemEntity> list = iService.selectItemEntityIn(no);
+			model.addAttribute("list", list);
+			
+			return "/seller/updateitembatch";
+		}
+		return "redirect:/seller/home";
+	}
+	
+	// 일괄수정
+	@PostMapping(value = "/updatebatchaction")
+	public String updateBatchPOST(
+			@RequestParam(name = "icode") Long[] icode,
+			@RequestParam(name="iname") String[] iname,
+			@RequestParam(name="icontent") String[] icontent,
+			@RequestParam(name="iprice") Long[] iprice,
+			@RequestParam(name="iquantity") Long[] iquantity) {
+		
+		List<ItemEntity> list = new ArrayList<>();
+		for(int i=0;i<iname.length;i++) {
+			ItemEntity item = new ItemEntity();
+			
+			item.setIcode(icode[i]);
+			item.setIname(iname[i]);
+			item.setIcontent(icontent[i]);
+			item.setIprice(iprice[i]);
+			item.setIquantity(iquantity[i]);
+			
+			list.add(item);
+		}
+		iService.updateItemBatch(list);
+		
+		return "redirect:/seller/home";
+	}
+	
+	// 물품 일괄 등록 화면
+	@GetMapping(value = "/insertbatch")
+	public String insertBatchGET() {
+		return "/seller/insert_batch";
+	}
+	
+	
+	@PostMapping(value = "/insertbatchaction")
+	public String insertBatchPOST(
+			@AuthenticationPrincipal User user,	// 물품을 등록할 때 필요한 uemail
+			@RequestParam(name="iname") String[] iname,
+			@RequestParam(name="icontent") String[] icontent,
+			@RequestParam(name="iprice") Long[] iprice,
+			@RequestParam(name="iquantity") Long[] iquantity,
+			@RequestParam(name = "timage") MultipartFile[] iimage) throws IOException {
+		// 배열을 받기 때문에 RequestParam을 사용(ModelAttribute 사용X)
+		
+		List<ItemEntity> list = new ArrayList<>();
+		for(int i=0;i<iname.length;i++) {
+			System.out.println(iname[i]);
+			System.out.println(icontent[i]);
+			System.out.println(iprice[i] );
+			System.out.println(iquantity[i] );
+			System.out.println(iimage[i].getOriginalFilename());
+			
+			ItemEntity item = new ItemEntity();
+			item.setIname(iname[i]);
+			item.setIcontent(icontent[i]);
+			item.setIprice(iprice[i]);
+			item.setIquantity(iquantity[i]);
+			
+			item.setIimage(iimage[i].getBytes());
+			item.setIimagename(iimage[i].getOriginalFilename());
+			item.setIimagesize(iimage[i].getSize());
+			item.setIimagetype(iimage[i].getContentType());
+			
+			MemberEntity member = new MemberEntity();
+			member.setUemail(user.getUsername());
+			item.setMember(member);
+			
+			list.add(item);
+		}
+		
+		iService.insertItemBath(list);
+		
+		return "redirect:/seller/home";
+	}
 	
 	// 127.0.0.1:9090/ROOT/seller/home?page=1&txt=검색어
 	@GetMapping(value= {"/", "/home"})

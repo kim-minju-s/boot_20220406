@@ -55,7 +55,7 @@ public class ItemEntity {
 	  
 	  // 이미지
 	  @Lob
-	  private String iimage;
+	  private byte[] iimage;
 	  
 	  // 이미지사이즈
 	  private Long iimagesize;

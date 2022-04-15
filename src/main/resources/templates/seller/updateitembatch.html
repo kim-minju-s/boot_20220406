@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>판매자 물품 일괄수정</title>
+</head>
+<body>
+    <div>
+        <h3>물품 일괄 수정</h3>
+        <hr />
+        <form th:action="@{/seller/updatebatchaction}" method="post">
+        	<div th:each="item : ${list}">
+	        	코드: <input type="text" name="icode" th:value="${item.icode}" readonly /> <br />
+	            물품이름    : <input type="text" name="iname" th:value="${item.iname}" /> <br />
+	            물품내용    : <textarea name="icontent" cols="" rows="6" th:text="${item.icontent}"></textarea> <br />
+	            가격    : <input type="text" name="iprice" th:value="${item.iprice}" /> <br />
+	            수량    : <input type="number" name="iquantity" th:value="${item.iquantity}" /> <br />
+	            	            
+            </div>
+	            <input type="submit" value="물품수정">
+        </form>
+    </div>
+</body>
+</html>
