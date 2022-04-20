@@ -11,6 +11,7 @@ import com.example.entity.ProductCountEntity;
 @Repository
 public interface ProductCountRepository extends JpaRepository<ProductCountEntity, Long> {
 
+	// 
 	@Query(value = "SELECT SUM(CNT) FROM PRODUCTCOUNT WHERE PRODUCT_NO=:no GROUP BY PRODUCT_NO", nativeQuery = true)
 	public long selectProductCountGroup(@Param(value = "no") Long ProductNo);
 	

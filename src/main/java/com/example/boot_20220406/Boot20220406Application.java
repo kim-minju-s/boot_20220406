@@ -25,7 +25,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"com.example.config",
 		"com.example.service",
 		"com.example.restcontroller",
-		"com.example.jwt"
+		"com.example.jwt",
+		"com.example.schedule"
 })
 // 매퍼 등록
 @MapperScan(basePackages= {
